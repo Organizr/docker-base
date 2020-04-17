@@ -6,7 +6,7 @@ on:
       - "root/*"
       - ".github/workflows/build.yml"
   schedule:
-    - cron: "0 20 * * 5"
+    - cron: "0 20 1,15 * 5"
 jobs:
   build-and-push-container:
     runs-on: ubuntu-latest
@@ -103,7 +103,7 @@ jobs:
       - name: Create day manifest
         if: github.event.issue.pull_request != 'false' && github.ref == 'refs/heads/master'
         run: |
-          export CURRENT_TIME=$(date --utc +%Y-%m-%d_%H.%M)
+          export CURRENT_TIME=$(date --utc +%Y-%m-%d_%H)
           docker manifest create ${{ steps.vars.outputs.repo }}:${CURRENT_TIME} \
             ${{ steps.vars.outputs.repo }}:${{ steps.vars.outputs.branch }}-${PLATFORM_1} \
             ${{ steps.vars.outputs.repo }}:${{ steps.vars.outputs.branch }}-${PLATFORM_2} \

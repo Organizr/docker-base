@@ -1,0 +1,10 @@
+#!/usr/bin/with-contenv bash
+
+# Print kernel info
+echo '-----------------------'
+echo '|     Kernel Info     |'
+echo '-----------------------'
+uname -a
+
+# Print TZ data
+echo "Time Zone: $TZ"

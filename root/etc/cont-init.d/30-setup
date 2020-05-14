@@ -25,7 +25,7 @@ fi
 # Check for the fastcgi_hide_header line and,
 # if it does not exist, add it
 if [[ $(grep -c fastcgi_hide_header /config/nginx/site-confs/default) -eq 0 ]]; then
-  sed -i $'s|include /etc/nginx/fastcgi_params;|include /etc/nginx/fastcgi_params;\\\n                fastcgi_hide_header X-Powered-By;|g' /config/nginx/site-confs/default
+  sed -i $'s|include /etc/nginx/fastcgi_params;|include /etc/nginx/fastcgi_params;\\\n    fastcgi_hide_header X-Powered-By;|g' /config/nginx/site-confs/default
 elif [[ $(grep -c fastcgi_hide_header /config/nginx/site-confs/default) -ge 1 ]]; then
   :
 fi
@@ -33,7 +33,7 @@ fi
 # Check for the try_files line for CVE-2019-11043 and,
 # if it does not exist, add it
 if [[ $(grep -c try_files /config/nginx/site-confs/default) -eq 1 ]]; then
-  sed -i $'s|fastcgi_split_path_info \^(\.+\\\.php)(\/\.+)\$;|fastcgi_split_path_info \^(\.+\\\.php)(\/\.+)\$;\\\n                try_files $fastcgi_script_name =404;|g' /config/nginx/site-confs/default
+  sed -i $'s|fastcgi_split_path_info \^(\.+\\\.php)(\/\.+)\$;|fastcgi_split_path_info \^(\.+\\\.php)(\/\.+)\$;\\\n    try_files $fastcgi_script_name =404;|g' /config/nginx/site-confs/default
 elif [[ $(grep -c try_files /config/nginx/site-confs/default) -ge 2 ]]; then
   :
 fi

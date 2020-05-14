@@ -1,7 +1,7 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE:-library/alpine:3.11}
 
-ENV S6_REL=1.22.1.0 S6_ARCH=aarch64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
+ENV S6_REL=2.0.0.1 S6_ARCH=aarch64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
 LABEL base.maintainer="christronyxyocum,Roxedus"
 LABEL base.s6.rel=${S6_REL} base.s6.arch=${S6_ARCH}
@@ -86,6 +86,6 @@ COPY root/ /
 EXPOSE 80 443
 VOLUME /config
 
-HEALTHCHECK --start-period=60s CMD curl -ILfSs http://localhost:80/nginx_status > /dev/null || curl -ILfkSs https://localhost:80/php_status > /dev/null || exit 1
+HEALTHCHECK --start-period=60s CMD curl -ILfSs http://localhost:8080/nginx_status > /dev/null || curl -ILfkSs https://localhost:8080/php_status > /dev/null || exit 1
 
 ENTRYPOINT ["/init"]

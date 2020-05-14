@@ -1,7 +1,7 @@
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE:-library/alpine:3.11}
 
-ENV S6_REL=1.22.1.0 S6_ARCH=armhf S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
+ENV S6_REL=2.0.0.1 S6_ARCH=armhf S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
 LABEL base.maintainer="christronyxyocum,Roxedus"
 LABEL base.s6.rel=${S6_REL} base.s6.arch=${S6_ARCH}

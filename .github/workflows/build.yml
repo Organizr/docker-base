@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - "*.Dockerfile"
-      - "root/*"
+      - "root/**"
       - ".github/workflows/build.yml"
   schedule:
     - cron: "0 20 1,15 * 5"

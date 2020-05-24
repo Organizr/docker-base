@@ -4,14 +4,18 @@ if [ ! -f /config/nginx/site-confs/healthcheck ]; then
   cp /defaults/healthcheck /config/nginx/site-confs/healthcheck
 fi
 
+if [[ $(grep -c 'listen 8080' /config/nginx/site-confs/healthcheck) -eq 0 ]]; then
+  echo "Updating listen on healthcheck"
+  sed -i -e 's|listen [0-9]*;|listen 8080;|' /config/nginx/site-confs/healthcheck
+fi
+
 # Copy over modified default site file
-# to use PHP-FPM
-if [ ! -f /config/nginx/site-confs/.default.original ]; then
+if [ ! -f /config/nginx/site-confs/.default.rework ]; then
   if [ -f /config/nginx/site-confs/default ]; then
     echo '--------------------------------------'
     echo '|      Backing up default file       |'
     echo '--------------------------------------'
-    mv /config/nginx/site-confs/default /config/nginx/site-confs/.default.original
+    mv /config/nginx/site-confs/default /config/nginx/site-confs/.default.rework
   else :
   fi
   echo '--------------------------------------'

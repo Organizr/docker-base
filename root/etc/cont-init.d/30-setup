@@ -26,6 +26,11 @@ else
   :
 fi
 
+if [[ $(grep -c "# V0.0." /config/nginx/site-confs/default) -eq 0 && $(grep -c "# V0.0.X" /config/nginx/site-confs/default) -eq 0 ]]; then
+  mv /config/nginx/site-confs/default /config/nginx/site-confs/.default.rework2
+  cp /defaults/default /config/nginx/site-confs/default
+fi
+
 # Check for the fastcgi_hide_header line and,
 # if it does not exist, add it
 if [[ $(grep -c fastcgi_hide_header /config/nginx/site-confs/default) -eq 0 ]]; then

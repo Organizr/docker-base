@@ -11,13 +11,15 @@ fi
 
 # Copy over modified default site file
 if [ ! -f /config/nginx/site-confs/.default.rework ]; then
-  if [ -f /config/nginx/site-confs/default ]; then
-    echo '--------------------------------------'
-    echo '|      Backing up default file       |'
-    echo '--------------------------------------'
-    mv /config/nginx/site-confs/default /config/nginx/site-confs/.default.rework
-  else :
-  fi
+  echo '--------------------------------------'
+  echo '|      Backing up default file       |'
+  echo '--------------------------------------'
+  mv /config/nginx/site-confs/default /config/nginx/site-confs/.default.rework
+else
+  :
+fi
+
+if [ -f /config/nginx/site-confs/default ]; then
   echo '--------------------------------------'
   echo '|      Copying default site file     |'
   echo '--------------------------------------'

@@ -87,6 +87,6 @@ COPY root/ /
 EXPOSE 80 443
 VOLUME /config
 
-HEALTHCHECK --start-period=60s CMD curl -ILfSs http://localhost:8080/nginx_status > /dev/null || curl -ILfkSs https://localhost:8080/php_status > /dev/null || exit 1
+HEALTHCHECK --start-period=60s CMD curl -ILfSs http://localhost:8080/nginx_status > /dev/null && curl -ILfkSs http://localhost:8080/php_status > /dev/null || exit 1
 
 ENTRYPOINT ["/init"]

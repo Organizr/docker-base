@@ -5,7 +5,7 @@
         notifempty
         delaycompress
         compress
-        nodateext
+        dateext
         sharedscripts
         postrotate
                 s6-svc -t /var/run/s6/services/php-fpm

@@ -29,8 +29,8 @@ jobs:
 
           ARCHITECTURE=${{ matrix.architecture }}
           echo "::set-output name=platform::${ARCHITECTURE//-/\/}"
-          echo "::set-output name=arch::${archer[${{ matrix.architecture }]}"
-          echo "::set-output name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}-${archer[${{ matrix.architecture }]}"
+          echo "::set-output name=arch::${archer[${{ matrix.architecture }}]}"
+          echo "::set-output name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}-${archer[${{ matrix.architecture }}]}"
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -90,7 +90,7 @@ jobs:
           TAG=${GITHUB_REF//refs\/heads\//}
           SOURCE=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}
 
-          docker manifest create ${IMAGE}:{{ steps.time.outputs.time }}             --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:${TAG}
+          docker manifest create ${IMAGE}:GHA-{{ steps.time.outputs.time }}             --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:${TAG}
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
           docker manifest create ${IMAGE}:latest                                    --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:latest
           fi
@@ -103,7 +103,7 @@ jobs:
           TAG=${GITHUB_REF//refs\/heads\//}
           SOURCE=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}
 
-          docker manifest create ${IMAGE}:{{ steps.time.outputs.time }}             --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:${TAG}
+          docker manifest create ${IMAGE}:GHA-{{ steps.time.outputs.time }}             --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:${TAG}
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
           docker manifest create ${IMAGE}:latest                                    --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:latest
           fi

@@ -26,7 +26,7 @@ jobs:
         run: |
           ARCHITECTURE=${{ matrix.architecture }}
           echo "::set-output name=platform::${ARCHITECTURE//-/\/}"
-          echo "::set-output name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')
+          echo "::set-output name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')"
           echo "::set-output name=time::$(date --utc +%Y-%m-%d_%H)"
           echo "::set-output name=source::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}"
           echo "::set-output name=url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"

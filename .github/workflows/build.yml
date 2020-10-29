@@ -87,7 +87,7 @@ jobs:
 
       - name: Set Time tag
         id: time
-        run: "::set-output name=time::$(date --utc +%Y-%m-%d_%H)"
+        run: "echo ::set-output name=time::$(date --utc +%Y-%m-%d_%H)"
 
       - name: Create manifests for DockerHub
         env:

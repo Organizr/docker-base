@@ -62,8 +62,8 @@ jobs:
           platforms: ${{ steps.vars.outputs.platform }}
           file: ./${{ steps.vars.outputs.arch }}.Dockerfile
           tags: |
-            ${{ steps.prep.outputs.tag }}
-            ghcr.io/${{ steps.prep.outputs.tag }}
+            ${{ steps.vars.outputs.tag }}
+            ghcr.io/${{ steps.vars.outputs.tag }}
 
   publish:
     runs-on: ubuntu-20.04

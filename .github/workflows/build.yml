@@ -76,7 +76,14 @@ jobs:
         uses: docker/login-action@v1
         with:
           username: roxedus
-          password: ${{ secrets.DOCKER_TOKEN }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: roxedus
+          password: ${{ secrets.PERSONAL_TOKEN }}
 
       - name: Set Time tag
         id: time

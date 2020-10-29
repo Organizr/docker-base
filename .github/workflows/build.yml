@@ -16,20 +16,20 @@ jobs:
     strategy:
       matrix:
         architecture: [linux-arm-v7, linux-arm64, linux-amd64]
+    outputs:
+      time: ${{ steps.vars.outputs.time }}
 
     steps:
       - uses: actions/checkout@v2
       - name: Create VARS
         id: vars
         run: |
-          declare -A archer
-          archer[linux-arm-v7]=armhf
-          archer[linux-arm64]=arm64
-          archer[linux-amd64]=amd64
-
           ARCHITECTURE=${{ matrix.architecture }}
           echo "::set-output name=platform::${ARCHITECTURE//-/\/}"
-          echo "::set-output name=arch::${archer[${{ matrix.architecture }}]}"
+          echo "::set-output name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')
+          echo "::set-output name=time::$(date --utc +%Y-%m-%d_%H)"
+          echo "::set-output name=source::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}"
+          echo "::set-output name=url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
           echo "::set-output name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}-${archer[${{ matrix.architecture }}]}"
 
       - name: Set up QEMU
@@ -60,10 +60,15 @@ jobs:
         with:
           push: true
           platforms: ${{ steps.vars.outputs.platform }}
-          file: ./${{ steps.vars.outputs.arch }}.Dockerfile
+          file: ./${{ matrix.architecture }}.Dockerfile
           tags: |
             ${{ steps.vars.outputs.tag }}
             ghcr.io/${{ steps.vars.outputs.tag }}
+          labels: |
+            org.opencontainers.image.created=${{ steps.vars.outputs.time }}
+            org.opencontainers.image.title=${{ steps.vars.outputs.repo }}
+            org.opencontainers.image.source=${{ steps.vars.outputs.source }}
+            org.opencontainers.image.url=${{ steps.vars.outputs.url }}
 
   publish:
     runs-on: ubuntu-20.04
@@ -85,10 +90,6 @@ jobs:
           username: roxedus
           password: ${{ secrets.PERSONAL_TOKEN }}
 
-      - name: Set Time tag
-        id: time
-        run: "echo ::set-output name=time::$(date --utc +%Y-%m-%d_%H)"
-
       - name: Create manifests for DockerHub
         env:
           DOCKER_CLI_EXPERIMENTAL: enabled
@@ -97,9 +98,9 @@ jobs:
           TAG=${GITHUB_REF//refs\/heads\//}
           SOURCE=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}
 
-          docker manifest create ${IMAGE}:GHA-{{ steps.time.outputs.time }}             --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:${TAG}
+          docker manifest create ${IMAGE}:GHA-${{ needs.build.outputs.time }}    --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:GHA-${{ needs.build.outputs.time }}
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
-          docker manifest create ${IMAGE}:latest                                    --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:latest
+          docker manifest create ${IMAGE}:latest                                 --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:latest
           fi
 
       - name: Create manifests for GitHub Container Registry
@@ -110,7 +111,7 @@ jobs:
           TAG=${GITHUB_REF//refs\/heads\//}
           SOURCE=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}
 
-          docker manifest create ${IMAGE}:GHA-{{ steps.time.outputs.time }}             --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:${TAG}
+          docker manifest create ${IMAGE}:GHA-${{ needs.build.outputs.time }}    --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:GHA-${{ needs.build.outputs.time }}
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
-          docker manifest create ${IMAGE}:latest                                    --amend ${SOURCE}-amd64 --amend ${SOURCE}-arm --amend ${SOURCE}-arm64 && docker manifest push ${IMAGE}:latest
+          docker manifest create ${IMAGE}:latest                                 --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:latest
           fi

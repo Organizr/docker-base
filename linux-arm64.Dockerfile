@@ -1,5 +1,5 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine:3.12}
+FROM ${BASE_IMAGE:-library/alpine:3.13}
 
 ENV S6_REL=2.1.0.2 S6_ARCH=aarch64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
@@ -74,6 +74,17 @@ RUN \
   echo "**** fix logrotate ****" && \
   sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf && \
   sed -i 's#/usr/sbin/logrotate /etc/logrotate.conf#/usr/sbin/logrotate /etc/logrotate.conf -s /config/log/logrotate.status#g' /etc/periodic/daily/logrotate && \
+  echo "**** enable PHP-FPM ****" && \
+  sed -i "s#listen = 127.0.0.1:9000#listen = '/var/run/php7-fpm.sock'#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#;listen.owner = nobody#listen.owner = abc#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#;listen.group = abc#listen.group = abc#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#;listen.mode = nobody#listen.mode = 0660#g" /etc/php7/php-fpm.d/www.conf && \
+  echo "**** set our recommended defaults ****" && \
+  sed -i "s#pm = dynamic#pm = ondemand#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#pm.max_children = 5#pm.max_children = 4000#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#pm.start_servers = 2#;pm.start_servers = 2#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#;pm.process_idle_timeout = 10s;#pm.process_idle_timeout = 10s;#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#;pm.max_requests = 500#pm.max_requests = 0#g" /etc/php7/php-fpm.d/www.conf && \
   echo "**** cleanup ****" && \
   apk del --purge \
     build-dependencies && \

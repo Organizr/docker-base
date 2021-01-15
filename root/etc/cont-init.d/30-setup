@@ -41,6 +41,10 @@ elif [[ $(grep -c fastcgi_hide_header /config/nginx/site-confs/default) -ge 1 ]]
   :
 fi
 
+# fix sites
+sed -i "s#fastcgi_pass 127.0.0.1:9000;#fastcgi_pass unix:/var/run/php7-fpm.sock;#g" /config/nginx/site-confs/healthcheck
+sed -i "s#fastcgi_pass 127.0.0.1:9000;#fastcgi_pass unix:/var/run/php7-fpm.sock;#g" /config/nginx/site-confs/default
+
 # Check for the try_files line for CVE-2019-11043 and,
 # if it does not exist, add it
 if [[ $(grep -c try_files /config/nginx/site-confs/default) -eq 1 ]]; then

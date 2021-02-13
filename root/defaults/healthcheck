@@ -1,4 +1,4 @@
-# V0.0.2
+# V0.0.3
 server {
   listen 8080;
 
@@ -17,7 +17,7 @@ server {
   location /php_status {
     allow 127.0.0.1;
     deny all;
-    fastcgi_pass 127.0.0.1:9000;
+    fastcgi_pass unix:/var/run/php7-fpm.sock;
     fastcgi_index index.php;
     fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
     include /etc/nginx/fastcgi_params;

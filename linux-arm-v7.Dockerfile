@@ -1,7 +1,7 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine:3.13}
+FROM ${BASE_IMAGE:-library/alpine:3.14}
 
-ENV S6_REL=2.1.0.2 S6_ARCH=armhf S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
+ENV S6_REL=2.2.0.3 S6_ARCH=armhf S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
 LABEL base.maintainer="christronyxyocum,Roxedus"
 LABEL base.s6.rel=${S6_REL} base.s6.arch=${S6_ARCH}
@@ -30,7 +30,7 @@ RUN \
     coreutils \
     curl \
     git \
-    libressl3.1-libssl \
+    libressl3.3-libssl \
     logrotate \
     nano \
     nginx \

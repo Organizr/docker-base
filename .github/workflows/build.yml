@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     paths:
-      - "*.Dockerfile"
+      - "**.Dockerfile"
       - "root/**"
       - ".github/workflows/build.yml"
   schedule:
@@ -54,7 +54,7 @@ jobs:
         with:
           registry: ghcr.io
           username: roxedus
-          password: ${{ secrets.PERSONAL_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v2
@@ -89,7 +89,7 @@ jobs:
         with:
           registry: ghcr.io
           username: roxedus
-          password: ${{ secrets.PERSONAL_TOKEN }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create manifests for DockerHub
         env:

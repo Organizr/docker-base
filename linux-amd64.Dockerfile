@@ -1,5 +1,5 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine:3.14}
+FROM ${BASE_IMAGE:-library/alpine:3.15}
 
 ENV S6_REL=2.2.0.3 S6_ARCH=amd64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
@@ -30,7 +30,7 @@ RUN \
     coreutils \
     curl \
     git \
-    libressl3.3-libssl \
+    libressl3.4-libssl \
     logrotate \
     nano \
     nginx \
@@ -43,6 +43,7 @@ RUN \
     php7-json \
     php7-ldap \
     php7-mbstring \
+    php7-mysqli \
     php7-openssl \
     php7-pdo_sqlite \
     php7-session \

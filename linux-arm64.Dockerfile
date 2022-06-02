@@ -1,5 +1,5 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine:3.15}
+FROM ${BASE_IMAGE:-library/alpine:3.16}
 
 ENV S6_REL=2.2.0.3 S6_ARCH=aarch64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
@@ -30,7 +30,7 @@ RUN \
     coreutils \
     curl \
     git \
-    libressl3.4-libssl \
+    libressl3.5-libssl \
     logrotate \
     nano \
     nginx \

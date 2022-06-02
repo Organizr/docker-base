@@ -50,13 +50,14 @@ RUN \
     php7-simplexml \
     php7-sqlite3 \
     php7-tokenizer \
+    shadow \
+    tzdata && \
+  apk add --no-cache  --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
     php7-xml \
     php7-xmlrpc \
     php7-xmlwriter \
     php7-zip \
-    php7-zlib \
-    shadow \
-    tzdata && \
+    php7-zlib && \
   echo "**** add s6 overlay ****" && \
   curl -o /tmp/s6-overlay.tar.gz -L \
     "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-${S6_ARCH}.tar.gz" && \

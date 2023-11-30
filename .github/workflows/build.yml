@@ -25,13 +25,12 @@ jobs:
         id: vars
         run: |
           ARCHITECTURE=${{ matrix.architecture }}
-          TIME=$(date --utc +%Y-%m-%d_%H)
-          echo "::set-output name=platform::${ARCHITECTURE//-/\/}"
-          echo "::set-output name=repo::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')"
-          echo "::set-output name=time::$TIME"
-          echo "::set-output name=source::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}"
-          echo "::set-output name=url::${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md"
-          echo "::set-output name=tag::$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):$TIME-${{ matrix.architecture }}"
+          echo "platform=${ARCHITECTURE//-/\/}" >> $GITHUB_OUTPUT
+          echo "repo=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          echo "time=$(date --utc +%Y-%m-%d_%H.%M)" >> $GITHUB_OUTPUT
+          echo "source=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/tree/${GITHUB_REF//refs\/heads\//}" >> $GITHUB_OUTPUT
+          echo "url=${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/master/README.md" >> $GITHUB_OUTPUT
+          echo "tag=$(echo ${GITHUB_REPOSITORY//docker-/} | tr '[:upper:]' '[:lower:]'):${GITHUB_REF//refs\/heads\//}-${{ matrix.architecture }}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -99,9 +98,9 @@ jobs:
           TAG=${GITHUB_REF//refs\/heads\//}
           SOURCE=${IMAGE}:${{ needs.build.outputs.time }}
 
-          docker manifest create ${IMAGE}:${{ needs.build.outputs.time }}    --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:${{ needs.build.outputs.time }}
+          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.time }}    ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
-          docker manifest create ${IMAGE}:latest                             --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:latest
+          docker buildx imagetools create -t ${IMAGE}:latest                             ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
           fi
 
       - name: Create manifests for GitHub Container Registry
@@ -112,7 +111,7 @@ jobs:
           TAG=${GITHUB_REF//refs\/heads\//}
           SOURCE=${IMAGE}:${{ needs.build.outputs.time }}
 
-          docker manifest create ${IMAGE}:${{ needs.build.outputs.time }}    --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:${{ needs.build.outputs.time }}
+          docker buildx imagetools create -t ${IMAGE}:${{ needs.build.outputs.time }}    ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
           if [[ ${GITHUB_REF//refs\/heads\//} == master ]]; then
-          docker manifest create ${IMAGE}:latest                             --amend ${SOURCE}-linux-amd64 --amend ${SOURCE}-linux-arm-v7 --amend ${SOURCE}-linux-arm64 && docker manifest push ${IMAGE}:latest
+          docker buildx imagetools create -t ${IMAGE}:latest                             ${SOURCE}-linux-amd64 ${SOURCE}-linux-arm-v7 ${SOURCE}-linux-arm64
           fi

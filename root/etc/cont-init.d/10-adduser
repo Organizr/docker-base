@@ -15,5 +15,5 @@ User gid:    $(id -g abc)
 -------------------------------------
 "
 
-chown abc:abc /config
-chown abc:abc /defaults
+lsiown abc:abc /config
+lsiown abc:abc /defaults

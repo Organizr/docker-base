@@ -10,7 +10,7 @@ if [[ $(grep -c 'listen 8080' /config/nginx/site-confs/healthcheck) -eq 0 ]]; th
 fi
 
 # Copy over modified default site file
-if [ ! -f /config/nginx/site-confs/.default.rework ]; then
+if [ ! -f /config/nginx/site-confs/.default.rework ]  && [ -f /config/nginx/site-confs/default ]; then
   echo '--------------------------------------'
   echo '|      Backing up default file       |'
   echo '--------------------------------------'
@@ -56,10 +56,10 @@ elif [[ $(grep -c try_files /config/nginx/site-confs/default) -ge 2 ]]; then
 fi
 
 # permissions
-chown -R abc:abc \
+lsiown -R abc:abc \
   /config \
   /var/lib/nginx \
   /var/tmp/nginx
-chmod -R g+w \
+lsiown -R g+w \
   /config/{nginx,www}
 chmod -R 644 /etc/logrotate.d

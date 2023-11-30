@@ -1,5 +1,5 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine:3.16}
+FROM ${BASE_IMAGE:-library/alpine:3.18}
 
 ENV S6_REL=2.2.0.3 S6_ARCH=amd64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
@@ -30,34 +30,33 @@ RUN \
     coreutils \
     curl \
     git \
-    libressl3.5-libssl \
+    libressl3.7-libssl \
     logrotate \
     nano \
     nginx \
     openssl \
-    php7 \
-    php7-curl \
-    php7-fileinfo \
-    php7-fpm \
-    php7-ftp \
-    php7-json \
-    php7-ldap \
-    php7-mbstring \
-    php7-mysqli \
-    php7-openssl \
-    php7-pdo_sqlite \
-    php7-session \
-    php7-simplexml \
-    php7-sqlite3 \
-    php7-tokenizer \
+    php81 \
+    php81-curl \
+    php81-fileinfo \
+    php81-fpm \
+    php81-ftp \
+    php81-ldap \
+    php81-mbstring \
+    php81-mysqli \
+    php81-openssl \
+    php81-pdo_sqlite \
+    php81-session \
+    php81-simplexml \
+    php81-sqlite3 \
+    php81-tokenizer \
+    php81-xmlwriter \
+    php81-xml \
+    php81-zip \
     shadow \
+    zlib \
     tzdata && \
   apk add --no-cache  --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
-    php7-xml \
-    php7-xmlrpc \
-    php7-xmlwriter \
-    php7-zip \
-    php7-zlib && \
+    php81-pecl-xmlrpc && \
   echo "**** add s6 overlay ****" && \
   curl -o /tmp/s6-overlay.tar.gz -L \
     "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-${S6_ARCH}.tar.gz" && \
@@ -77,16 +76,17 @@ RUN \
   sed -i "s#/var/log/messages {}.*# #g" /etc/logrotate.conf && \
   sed -i 's#/usr/sbin/logrotate /etc/logrotate.conf#/usr/sbin/logrotate /etc/logrotate.conf -s /config/log/logrotate.status#g' /etc/periodic/daily/logrotate && \
   echo "**** enable PHP-FPM ****" && \
-  sed -i "s#listen = 127.0.0.1:9000#listen = '/var/run/php7-fpm.sock'#g" /etc/php7/php-fpm.d/www.conf && \
-  sed -i "s#;listen.owner = nobody#listen.owner = abc#g" /etc/php7/php-fpm.d/www.conf && \
-  sed -i "s#;listen.group = abc#listen.group = abc#g" /etc/php7/php-fpm.d/www.conf && \
-  sed -i "s#;listen.mode = nobody#listen.mode = 0660#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#listen = 127.0.0.1:9000#listen = '/var/run/php8-fpm.sock'#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#;listen.owner = nobody#listen.owner = abc#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#;listen.group = abc#listen.group = abc#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#;listen.mode = nobody#listen.mode = 0660#g" /etc/php81/php-fpm.d/www.conf && \
   echo "**** set our recommended defaults ****" && \
-  sed -i "s#pm = dynamic#pm = ondemand#g" /etc/php7/php-fpm.d/www.conf && \
-  sed -i "s#pm.max_children = 5#pm.max_children = 4000#g" /etc/php7/php-fpm.d/www.conf && \
-  sed -i "s#pm.start_servers = 2#;pm.start_servers = 2#g" /etc/php7/php-fpm.d/www.conf && \
-  sed -i "s#;pm.process_idle_timeout = 10s;#pm.process_idle_timeout = 10s;#g" /etc/php7/php-fpm.d/www.conf && \
-  sed -i "s#;pm.max_requests = 500#pm.max_requests = 0#g" /etc/php7/php-fpm.d/www.conf && \
+  sed -i "s#pm = dynamic#pm = ondemand#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#pm.max_children = 5#pm.max_children = 4000#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#pm.start_servers = 2#;pm.start_servers = 2#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#;pm.process_idle_timeout = 10s;#pm.process_idle_timeout = 10s;#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#;pm.max_requests = 500#pm.max_requests = 0#g" /etc/php81/php-fpm.d/www.conf && \
+  sed -i "s#zlib.output_compression = Off#zlib.output_compression = On#g" /etc/php81/php.ini && \
   echo "**** cleanup ****" && \
   apk del --purge \
     build-dependencies && \

@@ -65,10 +65,19 @@ RUN \
     "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-noarch.tar.xz" && \
   curl -o /tmp/s6-overlay-arch.tar.xz -L \
     "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-${S6_ARCH}.tar.xz" && \
+  curl -o /tmp/s6-overlay-symlinks-noarch.tar.xz -L \
+    "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-symlinks-noarch.tar.xz" && \
+  curl -o /tmp/s6-overlay-symlinks-arch.tar.xz -L \
+    "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-symlinks-arch.tar.xz" && \
   tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
   tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz && \
-  echo "**** create php symlink ****" && \
-  ln -s /usr/bin/php85 /usr/bin/php && \
+  tar -C / -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz && \
+  tar -C / -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz && \
+  echo "**** guarantee correct php version is symlinked ****" && \
+  if [ "$(readlink /usr/bin/php)" != "php85" ]; then \
+    rm -rf /usr/bin/php && \
+    ln -s /usr/bin/php85 /usr/bin/php; \
+  fi && \
   echo "**** create abc user and make folders ****" && \
   groupmod -g 1000 users && \
   useradd -u 911 -U -d /config -s /bin/false abc && \

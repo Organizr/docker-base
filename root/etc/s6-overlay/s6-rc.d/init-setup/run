@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
 
 if [ ! -f /config/nginx/site-confs/healthcheck ]; then
   cp /defaults/healthcheck /config/nginx/site-confs/healthcheck
@@ -44,8 +44,10 @@ fi
 # fix sites
 sed -i "s#fastcgi_pass 127.0.0.1:9000;#fastcgi_pass unix:/var/run/php7-fpm.sock;#g" /config/nginx/site-confs/healthcheck
 sed -i "s#fastcgi_pass 127.0.0.1:9000;#fastcgi_pass unix:/var/run/php7-fpm.sock;#g" /config/nginx/site-confs/default
-sed -i "s#unix:/var/run/php7-fpm.sock;#unix:/var/run/php8-fpm.sock;#g" /config/nginx/site-confs/healthcheck
-sed -i "s#unix:/var/run/php7-fpm.sock;#unix:/var/run/php8-fpm.sock;#g" /config/nginx/site-confs/default
+sed -i "s#unix:/var/run/php7-fpm.sock;#unix:/var/run/php85-fpm.sock;#g" /config/nginx/site-confs/healthcheck
+sed -i "s#unix:/var/run/php7-fpm.sock;#unix:/var/run/php85-fpm.sock;#g" /config/nginx/site-confs/default
+sed -i "s#unix:/var/run/php8-fpm.sock;#unix:/var/run/php85-fpm.sock;#g" /config/nginx/site-confs/healthcheck
+sed -i "s#unix:/var/run/php8-fpm.sock;#unix:/var/run/php85-fpm.sock;#g" /config/nginx/site-confs/default
 sed -i "s#fastcgi_pass fastcgi_pass#fastcgi_pass#g" /config/nginx/site-confs/healthcheck
 sed -i "s#fastcgi_pass fastcgi_pass#fastcgi_pass#g" /config/nginx/site-confs/default
 

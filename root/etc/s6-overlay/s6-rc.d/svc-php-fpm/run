@@ -1,0 +1,3 @@
+#!/command/with-contenv bash
+
+exec /usr/sbin/php-fpm85 -F

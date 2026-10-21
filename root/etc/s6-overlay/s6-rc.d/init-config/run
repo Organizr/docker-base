@@ -1,0 +1,45 @@
+#!/command/with-contenv bash
+
+# make our folders
+mkdir -p \
+	/config/{nginx/site-confs,www,log/nginx,keys,log/php,php} \
+	/run \
+	/var/lib/nginx/tmp/client_body \
+	/var/tmp/nginx
+
+# copy config files
+[[ ! -f /config/nginx/nginx.conf ]] && \
+	cp /defaults/nginx.conf /config/nginx/nginx.conf
+[[ $(find /config/www -type f | wc -l) -eq 0 ]] && \
+	cp /defaults/index.html /config/www/index.html
+
+# create local php.ini if it doesn't exist
+# child images can provide /defaults/php-local.ini to override defaults
+[[ ! -f /config/php/php-local.ini ]] && {
+	if [[ -f /defaults/php-local.ini ]]; then
+		echo '-------------------------'
+		echo '| Setting up PHP config |'
+		echo '-------------------------'
+		cp /defaults/php-local.ini /config/php/php-local.ini
+		# append timezone if not already set
+		if ! grep -q "date.timezone" /config/php/php-local.ini; then
+			printf "\\ndate.timezone = %s\\n" "$TZ" >> /config/php/php-local.ini
+		fi
+	else
+		printf "; Edit this file to override php.ini directives and restart the container\\n\\ndate.timezone = %s\\n" "$TZ" > /config/php/php-local.ini
+	fi
+}
+# copy user php-local.ini to image
+cp /config/php/php-local.ini /etc/php85/conf.d/php-local.ini
+# fix php-fpm log location
+sed -i "s#;error_log = log/php85/error.log.*#error_log = /config/log/php/error.log#g" /etc/php85/php-fpm.conf
+# fix php-fpm user
+sed -i "s#user = nobody.*#user = abc#g" /etc/php85/php-fpm.d/www.conf
+sed -i "s#group = nobody.*#group = abc#g" /etc/php85/php-fpm.d/www.conf
+# enable php-monitoring
+sed -i "s#;pm.status_path = /status#pm.status_path = /php_status#g" /etc/php85/php-fpm.d/www.conf
+# create override for www.conf if it doesn't exist
+[[ ! -f /config/php/www2.conf ]] && \
+	printf "; Edit this file to override www.conf and php-fpm.conf directives and restart the container\\n\\n; Pool name\\n[www]\\n\\n" > /config/php/www2.conf
+# copy user www2.conf to image
+cp /config/php/www2.conf /etc/php85/php-fpm.d/www2.conf

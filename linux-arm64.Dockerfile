@@ -1,9 +1,9 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine:3.23.2}
+FROM ${BASE_IMAGE:-library/alpine:3.24}
 
 ENV S6_REL=3.2.1.0 S6_ARCH=aarch64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
-LABEL base.maintainer="christronyxyocum,Roxedus,metalcated"
+LABEL base.maintainer="christronyxyocum,Roxedus"
 LABEL base.s6.rel=${S6_REL} base.s6.arch=${S6_ARCH}
 
 LABEL org.label-schema.name="organizr/base" \
@@ -31,7 +31,7 @@ RUN \
     coreutils \
     curl \
     git \
-    libressl4.2-libssl \
+    libressl4.3-libssl \
     logrotate \
     nano \
     nginx \

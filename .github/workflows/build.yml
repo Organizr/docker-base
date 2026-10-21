@@ -12,7 +12,7 @@ on:
 jobs:
   build:
     if: "!contains(github.event.head_commit.message, 'skip ci')"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         architecture: [linux-arm-v7, linux-arm64, linux-amd64]
@@ -72,7 +72,7 @@ jobs:
             org.opencontainers.image.url=${{ steps.vars.outputs.url }}
 
   publish:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-26.04
     needs: [build]
     steps:
       - name: Checkout

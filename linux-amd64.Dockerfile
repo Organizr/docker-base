@@ -1,9 +1,9 @@
 ARG BASE_IMAGE
-FROM ${BASE_IMAGE:-library/alpine:3.23.2}
+FROM ${BASE_IMAGE:-library/alpine:3.24}
 
 ENV S6_REL=3.2.1.0 S6_ARCH=x86_64 S6_BEHAVIOUR_IF_STAGE2_FAILS=2 TZ=Etc/UTC
 
-LABEL base.maintainer="christronyxyocum,Roxedus,metalcated"
+LABEL base.maintainer="christronyxyocum,Roxedus"
 LABEL base.s6.rel=${S6_REL} base.s6.arch=${S6_ARCH}
 
 LABEL org.label-schema.name="organizr/base" \
@@ -31,7 +31,7 @@ RUN \
     coreutils \
     curl \
     git \
-    libressl4.2-libssl \
+    libressl4.3-libssl \
     logrotate \
     nano \
     nginx \
@@ -65,10 +65,19 @@ RUN \
     "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-noarch.tar.xz" && \
   curl -o /tmp/s6-overlay-arch.tar.xz -L \
     "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-${S6_ARCH}.tar.xz" && \
+  curl -o /tmp/s6-overlay-symlinks-noarch.tar.xz -L \
+    "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-symlinks-noarch.tar.xz" && \
+  curl -o /tmp/s6-overlay-symlinks-arch.tar.xz -L \
+    "https://github.com/just-containers/s6-overlay/releases/download/v${S6_REL}/s6-overlay-symlinks-arch.tar.xz" && \
   tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
   tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz && \
-  echo "**** create php symlink ****" && \
-  ln -s /usr/bin/php85 /usr/bin/php && \
+  tar -C / -Jxpf /tmp/s6-overlay-symlinks-noarch.tar.xz && \
+  tar -C / -Jxpf /tmp/s6-overlay-symlinks-arch.tar.xz && \
+  echo "**** guarantee correct php version is symlinked ****" && \
+  if [ "$(readlink /usr/bin/php)" != "php85" ]; then \
+    rm -rf /usr/bin/php && \
+    ln -s /usr/bin/php85 /usr/bin/php; \
+  fi && \
   echo "**** create abc user and make folders ****" && \
   groupmod -g 1000 users && \
   useradd -u 911 -U -d /config -s /bin/false abc && \

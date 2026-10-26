@@ -38,6 +38,7 @@ RUN \
     openssl \
     php85 \
     php85-curl \
+    php85-dom \
     php85-fileinfo \
     php85-fpm \
     php85-ftp \
